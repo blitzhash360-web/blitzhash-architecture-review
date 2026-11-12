@@ -1,0 +1,4 @@
+{
+  "crons": [{ "path": "/api/sync", "schedule": "* * * * *" }],
+  "functions": { "app/api/generate/route.ts": { "maxDuration": 300, "memory": 3009 } }
+}

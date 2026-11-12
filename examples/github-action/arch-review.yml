@@ -1,0 +1,24 @@
+# Copy to .github/workflows/arch-review.yml in your project.
+# Runs the read-only architecture review on every pull request, uploads the report,
+# and fails the check if the overall score drops below the number you choose.
+name: Architecture review
+on:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  review:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Architecture review
+        run: npx -y github:blitzhash360-web/blitzhash-architecture-review . --out ARCHITECTURE-REVIEW.md --fail-under 60
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: architecture-review
+          path: ARCHITECTURE-REVIEW.md
