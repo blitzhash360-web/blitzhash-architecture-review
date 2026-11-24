@@ -3,6 +3,7 @@ import { writeFileSync, rmSync, existsSync, mkdirSync, readFileSync } from 'node
 import { fileURLToPath } from 'node:url';
 import { review, toJSON } from './review.mjs';
 import { toMarkdown, toTerminal, VERSION } from './report.mjs';
+import { toHtml } from './diagram.mjs';
 import { makeDemoApp } from './demo.mjs';
 import { containsSecret } from './secrets.mjs';
 
@@ -11,6 +12,7 @@ const HELP = `arch-review v${VERSION}: plain-English architecture review of an A
 Usage
   arch-review [dir]                      scorecard + top fixes in the terminal
   arch-review [dir] --out <file.md>      also write the full plain-English report
+  arch-review [dir] --diagram <file.html> also write a founder-friendly HTML + SVG picture
   arch-review [dir] --md                 print the full report as Markdown
   arch-review [dir] --json               machine-readable result
   arch-review demo [--out <file.md>]     review a built-in fake Next.js + Supabase + Stripe app
@@ -22,6 +24,8 @@ Options
   --ignore <a,b>     skip these folders (relative paths, comma-separated)
   --no-git           don't call git (skips the "is .env committed?" check)
   --no-color         plain output (NO_COLOR / FORCE_COLOR are respected)
+  --diagram <file>   write a self-contained HTML + SVG architecture picture
+                     (also written automatically next to --out, as .html)
 
 Read-only: it reads files, never changes your code, never uses the network,
 and never prints secret values (only what kind of key was found and where).`;
@@ -74,6 +78,7 @@ export async function main(argv, io = {}) {
   const fc = process.env.FORCE_COLOR;
   const color = !args.includes('--no-color') && (fc !== undefined && fc !== '' ? fc !== '0' && fc !== 'false' : !process.env.NO_COLOR && !!isTTY);
   const outFile = opt(args, '--out');
+  const diagramFile = opt(args, '--diagram');
   const failUnder = opt(args, '--fail-under');
   const top = opt(args, '--top');
   const target = opt(args, '--target');
@@ -94,6 +99,17 @@ export async function main(argv, io = {}) {
     const md = toMarkdown(r);
     if (containsSecret(md)) throw new Error('refusing to write: report output matched a secret pattern');
     if (outFile) { const p = resolve(outFile); writeFileSync(p, md); r.outFile = outFile; }
+    let writtenHtml = null;
+    if (diagramFile || outFile) {
+      const dest = diagramFile
+        ? resolve(diagramFile)
+        : resolve(outFile.endsWith('.md') ? outFile.slice(0, -3) + '.html' : `${outFile}.html`);
+      const html = toHtml(r);
+      writeFileSync(dest, html);
+      writtenHtml = dest;
+      r.diagramFile = dest;
+    }
+    if (writtenHtml && !flags.has('--json') && !flags.has('--md')) out(`Architecture picture written to ${writtenHtml}`);
     if (flags.has('--json')) out(JSON.stringify(toJSON(r), null, 2));
     else if (flags.has('--md')) out(md);
     else out(toTerminal(r, { color }));

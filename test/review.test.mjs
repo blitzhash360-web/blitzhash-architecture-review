@@ -6,6 +6,7 @@ import { join, resolve } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import { review, toJSON } from '../src/review.mjs';
 import { toMarkdown, toTerminal } from '../src/report.mjs';
+import { toHtml, toSvg } from '../src/diagram.mjs';
 import { makeDemoApp, FAKE } from '../src/demo.mjs';
 import { findSecrets, redact } from '../src/secrets.mjs';
 import { main } from '../src/cli.mjs';
@@ -196,4 +197,30 @@ test('no key-shaped strings are committed anywhere in this repo', async () => {
   const hits = s.files.flatMap((f) => findSecrets(f.text).map((h) => `${f.path}:${h.line} ${h.kind}`));
   assert.deepEqual(hits, []);
   assert.equal(s.envFiles.filter((e) => !e.example).length, 0, 'no .env files in the repo');
+});
+
+test('demo app: HTML + SVG diagram labels the trust boundary and writes next to --out', async () => {
+  const r = withDemo((dir) => review(dir, { noGit: true }));
+  const html = toHtml(r);
+  assert.match(html, /<svg /);
+  assert.match(html, /trust boundary/i);
+  assert.match(html, /keep secrets here/i);
+  assert.match(html, /blitzhash-architecture-review/);
+  assert.doesNotMatch(html, /sk_live_|sk_test_|service_role|BEGIN [A-Z ]*PRIVATE KEY/);
+  const svg = toSvg(r.map, { name: r.name });
+  assert.match(svg, /<svg /);
+  assert.match(svg, /In the browser/);
+
+  const dir = mkdtempSync(join(tmpdir(), 'arch-diagram-'));
+  const mdPath = join(dir, 'report.md');
+  const { io, get } = capture();
+  const demoCode = await main(['demo', '--out', mdPath], io);
+  assert.equal(demoCode, 0);
+  assert.ok(existsSync(mdPath));
+  const htmlPath = join(dir, 'report.html');
+  assert.ok(existsSync(htmlPath), get());
+  const written = readFileSync(htmlPath, 'utf8');
+  assert.match(written, /<svg /);
+  assert.match(written, /trust boundary/i);
+  rmSync(dir, { recursive: true, force: true });
 });

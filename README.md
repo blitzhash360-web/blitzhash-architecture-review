@@ -21,8 +21,9 @@ npx -y github:blitzhash360-web/blitzhash-architecture-review demo
 # 2. In your project folder: scorecard and top fixes in the terminal
 npx -y github:blitzhash360-web/blitzhash-architecture-review
 
-# 3. Write the full plain-English report to share with your team or your AI tool
+# 3. Write the full plain-English report, plus a founder-friendly HTML + SVG picture
 npx -y github:blitzhash360-web/blitzhash-architecture-review --out ARCHITECTURE-REVIEW.md
+# also writes ARCHITECTURE-REVIEW.html  (or pass --diagram picture.html)
 ```
 
 Node 18.17+ and nothing else. No account, no API key, no network calls (the `npx` download aside). It never changes your code.
@@ -38,6 +39,7 @@ You built the app with Lovable, Bolt, Replit, v0, Cursor or Claude Code. It work
 | **Scorecard** | A score out of 100 and a grade for Security, Scaling & speed, Cost, Backups & recovery, Tests & reliability, plus an overall score (capped below 50 while any critical issue is open) |
 | **What your app is built with** | Frontend, backend, database, auth, payments, AI, email, file storage, hosting, monitoring, and the builder (Lovable, Bolt, Replit) |
 | **How data moves** | Who talks to whom: browser to database, browser to your API routes, webhooks, cron jobs, and outside services, as plain bullets and a Mermaid diagram GitHub renders |
+| **Architecture picture (v1.1)** | A self-contained HTML + SVG diagram a non-engineer can follow: browser vs your server vs third parties, with the trust boundary and where secrets should live. Written automatically next to `--out`, or with `--diagram file.html`. No Mermaid needed to open it |
 | **What's right** | What's already solid, so you know what not to touch |
 | **What's risky** | Each finding with *what we found*, *why it matters*, *how to fix*, effort, file and line, and an *Ask your AI tool* prompt |
 | **Prioritized fixes** | Fix before launch / Fix this month / Nice to have |
@@ -124,3 +126,8 @@ Original BlitzHash work, MIT licensed, no third-party code and zero dependencies
 ---
 
 Built by BlitzHash: need a senior team to check or scale your AI-built app? Free assessment at https://blitzhash.com
+
+
+## Credits
+
+The idea of a founder-friendly architecture picture was inspired by [cathrynlavery/diagram-design](https://github.com/cathrynlavery/diagram-design) (MIT). This repo does not include code from that project.

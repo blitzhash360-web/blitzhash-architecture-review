@@ -1,19 +1,46 @@
 {
   "name": "blitzhash-architecture-review",
-  "version": "1.0.0",
-  "description": "Point it at your AI-built app: it maps the stack and data flow and writes a plain-English report with a scorecard, what's right, what's risky (security, scaling, cost, backups, tests) and prioritized fixes. Read-only, zero dependencies.",
+  "version": "1.1.0",
+  "description": "Is your AI-built app ready for real users? One command maps your stack and data flow and writes a plain-English report plus a founder-friendly HTML architecture diagram: scorecard, what's right, what's risky, prioritized fixes. Read-only.",
   "type": "module",
-  "bin": { "arch-review": "bin/arch-review.mjs" },
-  "engines": { "node": ">=18.17" },
+  "bin": {
+    "arch-review": "bin/arch-review.mjs"
+  },
+  "engines": {
+    "node": ">=18.17"
+  },
   "scripts": {
     "test": "node --test test/*.test.mjs",
     "demo": "node bin/arch-review.mjs demo"
   },
-  "files": ["bin", "src", "examples", "skills", "README.md", "LICENSE"],
-  "keywords": ["architecture-review", "code-review", "vibe-coding", "lovable", "supabase", "security-audit", "launch-readiness", "agent-skills", "claude-code", "cursor"],
+  "files": [
+    "bin",
+    "src",
+    "examples",
+    "skills",
+    "README.md",
+    "LICENSE"
+  ],
+  "keywords": [
+    "architecture-review",
+    "code-review",
+    "vibe-coding",
+    "lovable",
+    "supabase",
+    "security-audit",
+    "launch-readiness",
+    "agent-skills",
+    "claude-code",
+    "cursor"
+  ],
   "author": "BlitzHash (https://blitzhash.com)",
   "license": "MIT",
   "homepage": "https://blitzhash.com",
-  "repository": { "type": "git", "url": "git+https://github.com/blitzhash360-web/blitzhash-architecture-review.git" },
-  "bugs": { "url": "https://github.com/blitzhash360-web/blitzhash-architecture-review/issues" }
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/blitzhash360-web/blitzhash-architecture-review.git"
+  },
+  "bugs": {
+    "url": "https://github.com/blitzhash360-web/blitzhash-architecture-review/issues"
+  }
 }

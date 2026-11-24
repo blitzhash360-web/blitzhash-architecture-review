@@ -3,7 +3,7 @@ import { dataFlow, serviceName } from './map.mjs';
 import { EFFORT_LABEL } from './checks.mjs';
 import { redact } from './secrets.mjs';
 
-export const VERSION = '1.0.0';
+export const VERSION = '1.1.0';
 export const NOT_COVERED = [
   'Whether backups actually exist and restore (only a test restore proves that)',
   'How the live app behaves under real traffic (load testing on staging)',
@@ -47,6 +47,7 @@ export function toMarkdown(r) {
   if (flow.lines.length) {
     for (const l of flow.lines) L.push(`- **${l.from} → ${l.to}**: ${l.via}${l.then?.length ? `, then ${l.then.join(', ')}` : ''}${l.warn ? `. ⚠️ ${l.warn}` : ''}`);
     L.push('', '```mermaid', flow.mermaid, '```', '');
+    L.push('A founder-friendly HTML + SVG picture of the same map is written next to this report when you pass `--out` (same name, `.html`) or `--diagram <file.html>`. It needs no Mermaid renderer and labels the browser / server trust boundary in plain English.', '');
   } else L.push('No API routes or direct database calls were found, so there is no data flow to map yet.', '');
   if (map.routes.length) {
     L.push('<details><summary>All API routes and functions</summary>', '', '| Route | File | Talks to |', '|---|---|---|');
